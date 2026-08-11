@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>L006-Five Star Storage - 43rd St | Facility Layout</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --brand-green: #166E39;
+      --brand-black: #000000;
+      --brand-yellow: #F7E543;
+      --brand-light: #F4F4F4;
+      --card-bg: #ffffff;
+      --card-border: rgba(0, 0, 0, 0.16);
+      --map-bg: #f8f8f5;
+      --row-gap: 12px;
+      --unit-scale: 5px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, system-ui, sans-serif;
+      background: linear-gradient(180deg, var(--brand-light) 0%, #eaeaea 100%);
+      color: var(--brand-black);
+    }
+
+    header {
+      background: var(--brand-green);
+      color: white;
+      padding: 28px 24px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand img {
+      width: 84px;
+      height: auto;
+      filter: invert(1);
+    }
+
+    .brand-text {
+      display: grid;
+      gap: 6px;
+    }
+
+    .brand-text h1 {
+      margin: 0;
+      font-size: clamp(1.75rem, 2vw, 2.45rem);
+      line-height: 1.05;
+    }
+
+    .brand-text p {
+      margin: 0;
+      opacity: 0.9;
+      letter-spacing: 0.02em;
+    }
+
+    .toolbar {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 24px 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .toolbar-top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .toolbar-top h2 {
+      margin: 0;
+      color: var(--brand-black);
+      font-size: 1.2rem;
+      letter-spacing: 0.01em;
+    }
+
+    .search-panel {
+      display: flex;
+      flex: 1 1 320px;
+      min-width: 240px;
+      gap: 10px;
+    }
+
+    .search-panel input {
+      flex: 1;
+      padding: 14px 16px;
+      border: 2px solid rgba(0, 0, 0, 0.16);
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+      background: white;
+    }
+
+    .search-panel button {
+      border: none;
+      border-radius: 12px;
+      background: var(--brand-black);
+      color: white;
+      padding: 0 20px;
+      cursor: pointer;
+      font-size: 1rem;
+      min-width: 108px;
+    }
+
+    .search-panel button:hover {
+      filter: brightness(1.05);
+    }
+
+    .info-banner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      border-radius: 18px;
+      padding: 18px 22px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    .info-banner span {
+      font-weight: 600;
+      color: var(--brand-green);
+    }
+
+    .map-frame {
+      width: 100%;
+      height: calc(100vh - 220px);
+      min-height: 520px;
+      max-height: 880px;
+      background: #fff;
+      border-radius: 24px;
+      border: 1px solid rgba(22, 110, 57, 0.14);
+      margin: 0 auto 36px;
+      overflow: auto;
+      position: relative;
+      cursor: grab;
+      box-shadow: 0 18px 55px rgba(0,0,0,0.08);
+    }
+
+    .map-frame:active {
+      cursor: grabbing;
+    }
+
+    .map-canvas {
+      min-width: 1700px;
+      min-height: 1040px;
+      background: radial-gradient(circle at top left, rgba(247,229,67,0.16), transparent 36%),
+                  linear-gradient(180deg, var(--map-bg) 0%, #eff0eb 100%);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--row-gap);
+    }
+
+    .section-group {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      padding: 10px 6px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .section-header {
+      min-width: 120px;
+      padding: 10px 14px;
+      border-radius: 16px;
+      background: var(--brand-black);
+      color: white;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+    }
+
+    .unit-card {
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border-radius: 14px;
+      border: 1px solid var(--card-border);
+      background: #ffffff;
+      min-width: 60px;
+      min-height: 46px;
+      padding: 10px 8px;
+      font-size: 0.78rem;
+      line-height: 1.1;
+      color: var(--brand-black);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .unit-card[data-category="Parking"] {
+      background: rgba(22, 110, 57, 0.08);
+      border-color: rgba(22, 110, 57, 0.25);
+    }
+
+    .unit-card[data-category="Storage"] {
+      background: rgba(247, 229, 67, 0.2);
+      border-color: rgba(247, 229, 67, 0.45);
+    }
+
+    .unit-card.highlight {
+      border-color: var(--brand-yellow);
+      box-shadow: 0 0 0 3px rgba(247, 229, 67, 0.25);
+      background: #fff8d2;
+      transform: scale(1.03);
+      z-index: 2;
+    }
+
+    .unit-card small {
+      display: block;
+      font-size: 0.72rem;
+      color: #333;
+      margin-top: 4px;
+      opacity: 0.8;
+    }
+
+    .help-text {
+      color: #333;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    footer {
+      text-align: center;
+      padding-bottom: 28px;
+      color: rgba(0,0,0,0.65);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 900px) {
+      .map-canvas {
+        min-width: 1200px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      header {
+        padding: 22px 18px 18px;
+      }
+
+      .toolbar {
+        padding: 16px 18px 18px;
+      }
+
+      .brand-text h1 {
+        font-size: 1.65rem;
+      }
+
+      .search-panel {
+        flex-direction: column;
+      }
+
+      .search-panel button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <img src="five-star-logo.svg" alt="Five Star Storage logo" />
+      <div class="brand-text">
+        <h1>L006-Five Star Storage - 43rd St</h1>
+        <p>Facility Layout</p>
+      </div>
+    </div>
+  </header>
+
+  <section class="toolbar" aria-label="Facility controls">
+    <div class="toolbar-top">
+      <h2>Interactive facility map</h2>
+      <div class="search-panel">
+        <input id="unitSearch" type="search" placeholder="Search unit number" aria-label="Search unit number" />
+        <button id="searchButton" type="button">Find unit</button>
+      </div>
+    </div>
+
+    <div class="info-banner">
+      <p class="help-text">Drag inside the map to reposition the facility layout. Search any unit number to highlight it on the layout.</p>
+      <p class="help-text"><span>Brand palette:</span> #166E39 • #000000 • #F7E543 • #F4F4F4</p>
+    </div>
+  </section>
+
+  <main class="map-frame" id="mapFrame" aria-label="Facility layout map">
+    <div class="map-canvas" id="mapCanvas"></div>
+  </main>
+
+  <footer>
+    Built with the L006 unit list; move the map manually and use search to highlight a unit.</footer>
+
+  <script>
+    const csvText = `Unit Number,CategoryType,Length,Width,Height,Floor
+AOS,Parking,15,10,0,1
+BOS,Parking,15,10,0,1
+COS,Parking,15,10,0,1
+DOS,Parking,15,10,0,1
+EOS,Parking,15,10,0,1
+FOS,Parking,15,10,0,1
+GOS,Parking,15,10,0,1
+HOS,Parking,20,10,0,1
+IOS,Parking,20,10,0,1
+JOS,Parking,20,10,0,1
+KOS,Parking,20,10,0,1
+LOS,Parking,20,10,0,1
+MOS,Parking,20,10,0,1
+NOS,Parking,25,10,0,1
+OOS,Parking,25,10,0,1
+POS,Parking,25,11,0,1
+SOS,Parking,40,10,0,1
+TOS,Parking,25,11,0,1
+UOS,Parking,25,11,0,1
+VOS,Parking,35,10,0,1
+WOS,Parking,35,10,0,1
+XOS,Parking,40,10,0,1
+YOS,Parking,40,10,0,1
+ZOS,Parking,35,10,0,1
+A10,Storage,10,11,0,1
+A11,Storage,10,11,0,1
+A12,Storage,10,11,0,1
+A13,Storage,10,10,0,1
+A14,Storage,10,10,0,1
+A15,Storage,10,10,0,1
+A16,Storage,10,10,0,1
+A17,Storage,10,10,0,1
+A18,Storage,10,5,0,1
+A19,Storage,10,5,0,1
+A20,Storage,10,5,0,1
+A21,Storage,10,5,0,1
+A22,Storage,10,5,0,1
+A23,Storage,10,5,0,1
+A24,Storage,10,11,0,1
+A25,Storage,10,5,0,1
+A26,Storage,10,5,0,1
+A27,Storage,10,5,0,1
+A28,Storage,10,5,0,1
+A29,Storage,10,5,0,1
+A30,Storage,10,5,0,1
+A31,Storage,10,5,0,1
+A32,Storage,10,5,0,1
+A33,Storage,10,5,0,1
+A34,Storage,5,5,0,1
+A35,Storage,5,5,0,1
+A36,Storage,5,5,0,1
+A37,Storage,5,5,0,1
+A38,Storage,10,10,0,1
+A39,Storage,10,10,0,1
+A40,Storage,10,11,0,1
+A41,Storage,10,11,0,1
+A42,Storage,10,11,0,1
+D10,Storage,10,5,0,1
+D11,Storage,10,10,0,1
+D12,Storage,10,10,0,1
+D13,Storage,5,5,0,1
+D14,Storage,5,5,0,1
+D15,Storage,5,5,0,1
+D16,Storage,5,5,0,1
+D17,Storage,10,5,0,1
+D18,Storage,10,5,0,1
+D19,Storage,10,5,0,1
+D20,Storage,10,5,0,1
+D21,Storage,10,5,0,1
+D22,Storage,10,5,0,1
+D23,Storage,10,5,0,1
+D24,Storage,10,5,0,1
+D25,Storage,10,5,0,1
+D26,Storage,10,5,0,1
+D27,Storage,10,10,0,1
+D28,Storage,10,10,0,1
+D29,Storage,10,10,0,1
+D30,Storage,10,5,0,1
+D31,Storage,10,10,0,1
+D32,Storage,10,10,0,1
+D33,Storage,10,10,0,1
+D34,Storage,10,10,0,1
+D35,Storage,10,5,0,1
+D36,Storage,10,5,0,1
+D37,Storage,10,5,0,1
+D38,Storage,10,5,0,1
+D39,Storage,10,5,0,1
+D40,Storage,10,5,0,1
+D41,Storage,10,5,0,1
+D42,Storage,10,5,0,1
+D44,Storage,10,5,0,1
+D46,Storage,10,5,0,1
+D47,Storage,10,10,0,1
+D48,Storage,10,10,0,1
+D49,Storage,10,10,0,1
+N1,Parking,40,11,0,1
+N2,Parking,40,11,0,1
+N3,Parking,40,11,0,1
+N4,Parking,40,11,0,1
+N5,Parking,40,11,0,1
+N6,Parking,40,11,0,1
+N7,Parking,40,11,0,1
+P2,Parking,35,10,0,1
+100,Storage,10,11,0,1
+101,Storage,10,11,0,1
+102,Storage,10,11,0,1
+103,Storage,10,10,0,1
+104,Storage,10,10,0,1
+105,Storage,10,10,0,1
+106,Storage,10,10,0,1
+107,Storage,10,10,0,1
+108,Storage,10,10,0,1
+109,Storage,10,10,0,1
+110,Storage,10,10,0,1
+111,Storage,10,11,0,1
+112,Storage,20,11,0,1
+114,Storage,15,11,0,1
+115,Storage,15,11,0,1
+116,Storage,45,11,0,1
+120,Storage,30,11,0,1
+121,Storage,30,11,0,1
+122,Storage,45,11,0,1
+123,Storage,25,11,0,1
+124,Storage,10,5,0,1
+125,Storage,10,10,0,1
+126,Storage,10,10,0,1
+127,Storage,10,10,0,1
+128,Storage,10,10,0,1
+129,Storage,15,10,0,1
+130,Storage,15,10,0,1
+131,Storage,10,10,0,1
+132,Storage,10,10,0,1
+133,Storage,10,11,0,1
+134,Storage,10,11,0,1
+135,Storage,10,11,0,1
+136,Storage,5,5,0,1
+137,Storage,5,5,0,1
+138,Storage,5,5,0,1
+139,Storage,5,5,0,1
+140,Storage,5,15,0,1
+143,Storage,5,5,0,1
+200,Storage,30,11,0,1
+201,Storage,30,11,0,1
+202,Storage,15,11,0,1
+203,Storage,15,11,0,1
+204,Storage,15,11,0,1
+205,Storage,15,11,0,1
+206,Storage,15,11,0,1
+207,Storage,15,11,0,1
+208,Storage,15,10,0,1
+209,Storage,15,10,0,1
+210,Storage,15,10,0,1
+211,Storage,15,5,0,1
+212,Storage,10,5,0,1
+213,Storage,10,5,0,1
+214,Storage,10,5,0,1
+215,Storage,10,5,0,1
+216,Storage,10,5,0,1
+217,Storage,10,5,0,1
+218,Storage,10,10,0,1
+219,Storage,10,10,0,1
+220,Storage,10,10,0,1
+221,Storage,10,10,0,1
+222,Storage,10,10,0,1
+223,Storage,30,11,0,1
+224,Storage,30,11,0,1
+227,Storage,20,10,0,1
+228,Storage,20,10,0,1
+229,Storage,20,10,0,1
+230,Storage,20,10,0,1
+231,Storage,20,10,0,1
+232,Storage,20,10,0,1
+233,Storage,20,10,0,1
+234,Storage,20,10,0,1
+235,Storage,15,5,0,1
+236,Storage,15,5,0,1
+237,Storage,15,5,0,1
+238,Storage,15,10,0,1
+239,Storage,15,10,0,1
+240,Storage,15,11,0,1
+241,Storage,15,11,0,1
+242,Storage,15,11,0,1
+243,Storage,15,11,0,1
+244,Storage,15,11,0,1
+245,Storage,15,11,0,1
+248,Storage,5,5,0,1
+249,Storage,5,5,0,1
+250,Storage,5,5,0,1
+251,Storage,5,5,0,1
+252,Storage,5,5,0,1
+253,Storage,5,5,0,1
+300,Storage,15,11,0,1
+301,Storage,30,11,0,1
+302,Storage,20,11,0,1
+303,Storage,20,11,0,1
+304,Storage,20,11,0,1
+305,Storage,20,11,0,1
+306,Storage,10,11,0,1
+307,Storage,10,11,0,1`;
+
+    const parseCsv = (text) => {
+      return text.trim().split('\n').slice(1).map(line => {
+        const [unitNumber, category, length, width, height, floor] = line.split(',');
+        return {
+          unitNumber: unitNumber.trim(),
+          category: category.trim(),
+          length: Number(length),
+          width: Number(width),
+          height: Number(height),
+          floor: Number(floor)
+        };
+      });
+    };
+
+    const units = parseCsv(csvText);
+
+    const getGroupKey = (unit) => {
+      if (/^\d/.test(unit.unitNumber)) {
+        const hundreds = unit.unitNumber.length > 2 ? unit.unitNumber.slice(0, 1) : unit.unitNumber;
+        return `${hundreds}00s`;
+      }
+      const match = unit.unitNumber.match(/^[A-Z]+/);
+      return match ? match[0] : 'Other';
+    };
+
+    const groupUnits = units.reduce((acc, unit) => {
+      const group = getGroupKey(unit);
+      if (!acc[group]) acc[group] = [];
+      acc[group].push(unit);
+      return acc;
+    }, {});
+
+    const groupOrder = Object.keys(groupUnits).sort((left, right) => {
+      const numeric = (name) => (name.match(/^\d+/) ? Number(name.replace(/\D.*$/, '')) : 1000 + name.charCodeAt(0));
+      return numeric(left) - numeric(right);
+    });
+
+    const mapCanvas = document.getElementById('mapCanvas');
+    let activeCard = null;
+
+    const createUnitCard = (unit) => {
+      const card = document.createElement('div');
+      card.className = 'unit-card';
+      card.dataset.unit = unit.unitNumber;
+      card.dataset.category = unit.category;
+      card.style.width = `${Math.max(60, unit.length * 4.5)}px`;
+      card.style.height = `${Math.max(46, unit.width * 4)}px`;
+      card.innerHTML = `<strong>${unit.unitNumber}</strong><small>${unit.category}</small>`;
+      return card;
+    };
+
+    groupOrder.forEach(groupName => {
+      const unitsInGroup = groupUnits[groupName];
+      const section = document.createElement('section');
+      section.className = 'section-group';
+      const header = document.createElement('div');
+      header.className = 'section-header';
+      header.textContent = groupName;
+      section.appendChild(header);
+
+      unitsInGroup.forEach(unit => section.appendChild(createUnitCard(unit)));
+      mapCanvas.appendChild(section);
+    });
+
+    const searchInput = document.getElementById('unitSearch');
+    const searchButton = document.getElementById('searchButton');
+
+    const clearHighlight = () => {
+      if (activeCard) {
+        activeCard.classList.remove('highlight');
+        activeCard = null;
+      }
+    };
+
+    const highlightUnit = (value) => {
+      const query = value.trim().toUpperCase();
+      clearHighlight();
+      if (!query) return;
+      const card = mapCanvas.querySelector(`.unit-card[data-unit="${query}"]`);
+      if (card) {
+        card.classList.add('highlight');
+        activeCard = card;
+        card.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+      } else {
+        alert(`Unit ${query} not found. Please verify the unit number.`);
+      }
+    };
+
+    searchButton.addEventListener('click', () => highlightUnit(searchInput.value));
+    searchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        highlightUnit(searchInput.value);
+      }
+    });
+
+    const mapFrame = document.getElementById('mapFrame');
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let scrollLeft = 0;
+    let scrollTop = 0;
+
+    mapFrame.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+      isDragging = true;
+      startX = event.clientX;
+      startY = event.clientY;
+      scrollLeft = mapFrame.scrollLeft;
+      scrollTop = mapFrame.scrollTop;
+      mapFrame.setPointerCapture(event.pointerId);
+    });
+
+    mapFrame.addEventListener('pointermove', (event) => {
+      if (!isDragging) return;
+      const dx = event.clientX - startX;
+      const dy = event.clientY - startY;
+      mapFrame.scrollLeft = scrollLeft - dx;
+      mapFrame.scrollTop = scrollTop - dy;
+    });
+
+    mapFrame.addEventListener('pointerup', () => {
+      isDragging = false;
+    });
+
+    mapFrame.addEventListener('pointerleave', () => {
+      isDragging = false;
+    });
+  </script>
+</body>
+</html>
